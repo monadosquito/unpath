@@ -8,6 +8,7 @@ unpath
     [--suffix <prefix>]
     [-d | --document-format <document_format>]
     [-h | --help]
+    [-s | --save]
     <root_directory_path>
     [<document_path>]
 
@@ -48,6 +49,9 @@ Markdown
 
 -h, --help (0)
     whether to print the help message and then exit
+
+-s, --save (0)
+    whether to save output into a <document_path> file instead of printing it\
 "
 noFlagOrOptErr () {
     echo "error: $1 flag or option undefined"
@@ -57,6 +61,7 @@ noFmtErr () {
 }
 noRootPathErr='<root_directory_path> argument not passed'
 stdinDocMsg='document read from stdin...'
+noDocPathErr='<document_path> argument not passed'
 
 args=()
 documentFormat=Markdown
@@ -65,6 +70,8 @@ pathPrefix=''
 pathSuffix=''
 prefix=''
 suffix=''
+save=0
+savePath=/dev/stdout
 
 while (( $# > 0 ))
 do
@@ -97,6 +104,9 @@ do
         --suffix)
             suffix=$2
             shift
+            ;;
+        -s | --save)
+            save=1
             shift
             ;;
         -* | --*)
@@ -113,13 +123,23 @@ set -- "${args[@]}"
 
 rootPath="${1:?$noRootPathErr}"
 documentFormat=${documentFormat,,}
-if (( $# == 1 ))
+if (( $save == 1 ))
 then
-    echo "$stdinDocMsg"
-    doc=$(tee)
-else
+    if (( $# == 1 ))
+    then
+        echo "$noDocPathErr"
+        exit 1
+    fi
     doc=$(cat "$2")
-    docPath=$2
+    savePath=$2
+else
+    if (( $# == 1 ))
+    then
+        echo "$stdinDocMsg"
+        doc=$(tee)
+    else
+        doc=$(cat "$2")
+    fi
 fi
 
 paths=($(find $rootPath -type f))
@@ -163,4 +183,4 @@ do
                   | sed "\|$lclPathMrk|N; \|\n|r $path"
                   )
 done
-echo "$pathExpanded"
+echo "$pathExpanded" > "$savePath"

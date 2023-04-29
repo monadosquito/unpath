@@ -10,6 +10,7 @@ unpath
     [--suffix <prefix>]
     [-d | --document-format <document_format>]
     [-h | --help]
+    [-s | --save]
     <root_directory_path>
     [<document_path>]
 ```
@@ -48,6 +49,7 @@ into a `buildInputs` field of a `shell.nix` file of a dependee.
 
 1. Mark a \<document\_path\> file. ([?](#mark))
 2. Expand paths. ([?](#expand))
+3. Save output. ([?](#save))
 
 # Mark
 
@@ -74,6 +76,16 @@ or with a path to the `shell.nix` file as its argument.
 
 - Some custom prefixes and suffixes can be set directly
 to avoid using a predefined set of them.
+
+# Save
+
+If \<document\_path\> file contents
+with [expanded](#expand) paths are satisfying,
+then run the command
+again
+but passing the `--save` (`-s`) flag
+to save it into a \<document\_path\> file
+with new contents.
 
 # Convention
 
@@ -102,3 +114,4 @@ the flag and options descriptions
 |`--suffix`               |` ``` `                                            |text to append to inserted file contents                                      |
 |`-d`, `--document-format`|`Markdown`                                         |a predefined set of prefixes and suffixes to use                              |
 |`-h`, `--help`           |`0`                                                |whether to print the help message and then exit                               |
+|`-s`, `--save`           |`0`                                                |whether to save output into a \<document\_path\> file instead of printing it  |
