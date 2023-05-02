@@ -12,4 +12,5 @@ in
             name = "unpath";
             phases = ["installPhase"];
             src = ./src;
+            version = "1.0.0";
         }

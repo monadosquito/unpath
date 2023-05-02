@@ -19,6 +19,8 @@ The `unpath` tool is to expand file paths into their contents.
 - to be an isomorphism\
 (`unpath <root_directory_path> <document_path> | unpath --invert` = id\
 and `unpath --invert <document_path> | unpath <root_directory_path>` = id)
+- to be indempotent\
+(`unpath <root_directory_path> <document_path> | unpath <root_directory_path>` = `unpath <root_directory_path> <document_path>`)
 - to print a \<document\_path\> file
 with each \<file\_path\_prefix\>\<local\_file\_path\>\<file\_path\_suffix\> file path marker
 prepended

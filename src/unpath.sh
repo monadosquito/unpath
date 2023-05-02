@@ -65,6 +65,21 @@ noRootPathErr='<root_directory_path> argument not passed'
 stdinDocMsg='document read from stdin...'
 noDocPathErr='<document_path> argument not passed'
 
+path () {
+    pathPrefix=$1
+    pathSuffix=$2
+    suffix=$3
+    doc=$4
+
+    anyPathMrkPtrn="$pathPrefix.*$pathSuffix"
+    echo "$doc" \
+        | sed \
+              --regexp-extended \
+              --expression="\|$anyPathMrkPtrn|N" \
+              --expression="s|($anyPathMrkPtrn)\n^\s*$|\1\n$suffix\n|" \
+        | sed "\|$anyPathMrkPtrn|,\|^$suffix$|{\|$anyPathMrkPtrn|!d}"
+}
+
 args=()
 documentFormat=Markdown
 help=0
@@ -176,24 +191,15 @@ esac
 : ${prefix:="$pfx"}
 : ${suffix:="$sfx"}
 
-if (( $invert == 1 ))
+output=$(path "$pathPrefix" "$pathSuffix" "$suffix" "$doc")
+if (( $invert == 0 ))
 then
-    anyPathMrkPtrn="$pathPrefix.*$pathSuffix"
-    output=$(echo "$doc" \
-            | sed \
-                  --regexp-extended \
-                  --expression="\|$anyPathMrkPtrn|N" \
-                  --expression="s|($anyPathMrkPtrn)\n^\s*$|\1\n$suffix\n|" \
-            | sed "\|$anyPathMrkPtrn|,\|^$suffix$|{\|$anyPathMrkPtrn|!d}"
-            )
-else
     fstMrkPath=$(echo "$doc" \
                 | sed --quiet --regexp-extended \
                       "s|$pathPrefix(.*)$pathSuffix|\1|p" \
                 | head -1
                 )
     fstLclRoot=${fstMrkPath%%/*}
-    output=$doc
     for path in "${paths[@]}"
     do
         pathMrk=$pathPfx$path$pathSfx
