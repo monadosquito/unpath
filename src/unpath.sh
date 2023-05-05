@@ -10,15 +10,15 @@ unpath
 Print a <document_path> file with each file path marker \
 appended with decorated contents of the file \
 read from a <root_directory_path> directory \
-by a <file_path> path.
+by a <local_file_path> path.
 
 PREDEFINED DOCUMENT FORMATS
 
 Markdown
     inserted file contents prefix -- "'```<<root_directory_path>first_file_extension>'"
     inserted file contents suffix -- "'```'"
-    file path markers                  -- <!-- \"<file_path>\" -->, \
-<!-- '<file_path>' -->
+    file path markers                  -- <!-- \"<local_file_path>\" -->, \
+<!-- '<local_file_path>' -->
 
 -d, --document-format (Markdown)
     a predefined set of decorations to use
@@ -90,6 +90,11 @@ case $documentFormat in
         exit 1
         ;;
 esac
+fstMrkPath=$(echo "$doc" \
+            | sed --quiet --regexp-extended "s|$pathPfx(.*)$pathSfx|\1|p" \
+            | head -1
+            )
+fstLclRoot=${fstMrkPath%%/*}
 pathExpanded=$doc
 for path in "${paths[@]}"
 do
@@ -97,6 +102,12 @@ do
     pathExpanded=$(echo "$pathExpanded" \
                   | sed "\|$pathMrk|a $pfx\n$sfx" \
                   | sed "\|$pathMrk|N; \|\n|r $path"
+                  )
+    lclPath=$fstLclRoot${path##*/$fstLclRoot}
+    lclPathMrk=$pathPfx$lclPath$pathSfx
+    pathExpanded=$(echo "$pathExpanded" \
+                  | sed "\|$lclPathMrk|a $pfx\n$sfx" \
+                  | sed "\|$lclPathMrk|N; \|\n|r $path"
                   )
 done
 echo "$pathExpanded"

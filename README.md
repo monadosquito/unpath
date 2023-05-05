@@ -15,7 +15,7 @@ unpath
 - to print a \<document\_path\> file with each file path marker
 appended with decorated contents of the file
 read from a \<root\_directory\_path\> directory
-by a \<file\_path\> path
+by a \<local\_file\_path\> path
 
 ## Installation flow
 
@@ -70,9 +70,9 @@ followed by the [`bem` library](https://github.com/monadosquito/bem).
 
 the predefined document formats
 
-|Document format|Inserted file contents prefix                     |Inserted file contents suffix |Path markers                                      |
-|---------------|--------------------------------------------------|------------------------------|--------------------------------------------------|
-|Markdown       |` ```<<root_directory_path>first_file_extension> `|` ``` `                       |`<!-- "<file_path>" -->`, `<!-- '<file_path>' -->`|
+|Document format|Inserted file contents prefix                    |Inserted file contents suffix |Path markers                                                  |
+|---------------|-------------------------------------------------|------------------------------|--------------------------------------------------------------|
+|Markdown       |` ```<<root_directoy_path>first_file_extension> `|` ``` `                       |`<!-- "<local_file_path>" -->`, `<!-- '<local_file_path>' -->`|
 
 ## Table 2
 
@@ -80,5 +80,5 @@ the flag and options descriptions
 
 |Flag or option           |Default value|Description                                    |
 |-------------------------|-------------|-----------------------------------------------|
-|`-d`, `--document-format`|`Markdown`   |a predefined set of decorations                |
+|`-d`, `--document-format`|`Markdown`   |a predefined set of decorations to use         |
 |`-h`, `--help`           |`0`          |whether to print the help message and then exit|
