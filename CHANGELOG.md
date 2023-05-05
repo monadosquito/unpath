@@ -2,6 +2,8 @@
 
 ## Added
 
+- Some custom prefixes and suffixes can be set
+by passing them as values of corresponding \<prefix\> or \<suffix\> options.
 - A \<root\_directory\_path\> directory can be omitted from markers file paths.
 - A \<document\_path\> file can be printed with each file path marker
 appended with decorated contents of the file
