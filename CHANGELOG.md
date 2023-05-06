@@ -2,6 +2,8 @@
 
 ## Added
 
+- A previous [expanding](https://github.com/monadosquito/unpath#expand) can be cancelled
+by passing the `--invert` (`-i`) flag.
 - A document
 with [expanded](https://github.com/monadosquito/unpath#expand) file paths can be [saved](https://github.com/monadosquito/unpath#save)
 into a \<document\_path\> file by passing the `--save` (`-s`) flag.

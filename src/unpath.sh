@@ -1,7 +1,7 @@
 helpMsg="\
 The unpath tool is to expand file paths into their contents.
 
-unpath
+{unpath | unpath {-i | --invert}}
     [--path-prefix <path_prefix>]
     [--path-suffix <path_suffix>]
     [--prefix <prefix>]
@@ -9,8 +9,7 @@ unpath
     [-d | --document-format <document_format>]
     [-h | --help]
     [-s | --save]
-    <root_directory_path>
-    [<document_path>]
+    {<root_directory_path> [<document_path>] | [<document_path>]}
 
 Print a <document_path> file
 with each <file_path_prefix><local_file_path><file_path_suffix> file path marker \
@@ -50,6 +49,9 @@ Markdown
 -h, --help (0)
     whether to print the help message and then exit
 
+-i, --invert (0)
+    whether to cancel a previous expanding
+
 -s, --save (0)
     whether to save output into a <document_path> file instead of printing it\
 "
@@ -72,6 +74,8 @@ prefix=''
 suffix=''
 save=0
 savePath=/dev/stdout
+invert=0
+docPathArgPos=2
 
 while (( $# > 0 ))
 do
@@ -109,6 +113,10 @@ do
             save=1
             shift
             ;;
+        -i | --invert)
+            invert=1
+            shift
+            ;;
         -* | --*)
             echo "$(noFlagOrOptErr "$1")"
             exit 1
@@ -121,24 +129,30 @@ do
 done
 set -- "${args[@]}"
 
-rootPath="${1:?$noRootPathErr}"
 documentFormat=${documentFormat,,}
+if (( $invert == 1 ))
+then
+    docPathArgPos=1
+else
+    rootPath="${1:?$noRootPathErr}"
+fi
 if (( $save == 1 ))
 then
-    if (( $# == 1 ))
+    if (( $# == 1 && $invert == 0 ))
     then
         echo "$noDocPathErr"
         exit 1
     fi
-    doc=$(cat "$2")
-    savePath=$2
+    doc=$(cat "${!docPathArgPos}")
+    savePath=${!docPathArgPos}
 else
-    if (( $# == 1 ))
+    rqdArgsNum=$(($docPathArgPos - 1))
+    if [[ $# == ${!rqdArgsNum} ]]
     then
         echo "$stdinDocMsg"
         doc=$(tee)
     else
-        doc=$(cat "$2")
+        doc=$(cat "${!docPathArgPos}")
     fi
 fi
 
@@ -162,25 +176,37 @@ esac
 : ${prefix:="$pfx"}
 : ${suffix:="$sfx"}
 
-fstMrkPath=$(echo "$doc" \
-            | sed --quiet --regexp-extended \
-                  "s|$pathPrefix(.*)$pathSuffix|\1|p" \
-            | head -1
+if (( $invert == 1 ))
+then
+    anyPathMrkPtrn="$pathPrefix.*$pathSuffix"
+    output=$(echo "$doc" \
+            | sed \
+                  --regexp-extended \
+                  --expression="\|$anyPathMrkPtrn|N" \
+                  --expression="s|($anyPathMrkPtrn)\n^\s*$|\1\n$suffix\n|" \
+            | sed "\|$anyPathMrkPtrn|,\|^$suffix$|{\|$anyPathMrkPtrn|!d}"
             )
-fstLclRoot=${fstMrkPath%%/*}
-pathExpanded=$doc
-for path in "${paths[@]}"
-do
-    pathMrk=$pathPfx$path$pathSfx
-    pathExpanded=$(echo "$pathExpanded" \
-                  | sed "\|$pathMrk|a $prefix\n$suffix" \
-                  | sed "\|$pathMrk|N; \|\n|r $path"
-                  )
-    lclPath=$fstLclRoot${path##*/$fstLclRoot}
-    lclPathMrk=$pathPfx$lclPath$pathSfx
-    pathExpanded=$(echo "$pathExpanded" \
-                  | sed "\|$lclPathMrk|a $prefix\n$suffix" \
-                  | sed "\|$lclPathMrk|N; \|\n|r $path"
-                  )
-done
-echo "$pathExpanded" > "$savePath"
+else
+    fstMrkPath=$(echo "$doc" \
+                | sed --quiet --regexp-extended \
+                      "s|$pathPrefix(.*)$pathSuffix|\1|p" \
+                | head -1
+                )
+    fstLclRoot=${fstMrkPath%%/*}
+    output=$doc
+    for path in "${paths[@]}"
+    do
+        pathMrk=$pathPfx$path$pathSfx
+        pathExpanded=$(echo "$pathExpanded" \
+                      | sed "\|$pathMrk|a $prefix\n$suffix" \
+                      | sed "\|$pathMrk|N; \|\n|r $path"
+                      )
+        lclPath=$fstLclRoot${path##*/$fstLclRoot}
+        lclPathMrk=$pathPrefix$lclPath$pathSuffix
+        output=$(echo "$output" \
+                | sed "\|$lclPathMrk|a $prefix\n$suffix" \
+                | sed "\|$lclPathMrk|N; \|\n|r $path"
+                )
+    done
+fi
+echo "$output" > "$savePath"

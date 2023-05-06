@@ -3,7 +3,7 @@
 The `unpath` tool is to expand file paths into their contents.
 
 ```sh
-unpath
+{unpath | unpath {-i | --invert}}
     [--path-prefix <file_path_prefix>]
     [--path-suffix <file_path_suffix>]
     [--prefix <prefix>]
@@ -11,12 +11,14 @@ unpath
     [-d | --document-format <document_format>]
     [-h | --help]
     [-s | --save]
-    <root_directory_path>
-    [<document_path>]
+    {<root_directory_path> [<document_path>] | [<document_path>]}
 ```
 
 ## Features
 
+- to be an isomorphism\
+(`unpath <root_directory_path> <document_path> | unpath --invert` = id\
+and `unpath --invert <document_path> | unpath <root_directory_path>` = id)
 - to print a \<document\_path\> file
 with each \<file\_path\_prefix\>\<local\_file\_path\>\<file\_path\_suffix\> file path marker
 prepended
@@ -71,6 +73,8 @@ whose contents are to be [expanded](#expand) with.
 
 - The `nix-shell` command must be run from a root directory of a dependee
 or with a path to the `shell.nix` file as its argument.
+- A first [expanding](#expand) can be cancelled
+by passing the `--invert` (`-i`) flag.
 
 ## Hints
 
@@ -114,4 +118,5 @@ the flag and options descriptions
 |`--suffix`               |` ``` `                                            |text to append to inserted file contents                                      |
 |`-d`, `--document-format`|`Markdown`                                         |a predefined set of prefixes and suffixes to use                              |
 |`-h`, `--help`           |`0`                                                |whether to print the help message and then exit                               |
+|`-i`, `--invert`         |`0`                                                |whether to cancel a previous expanding                                        |
 |`-s`, `--save`           |`0`                                                |whether to save output into a \<document\_path\> file instead of printing it  |
