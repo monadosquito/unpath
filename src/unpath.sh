@@ -8,6 +8,7 @@ The unpath tool is to expand file paths into their contents.
     [--suffix <prefix>]
     [-d | --document-format <document_format>]
     [-h | --help]
+    [-o <class> | --only <class>]
     [-s | --save]
     {<root_directory_path> [<document_path>] | [<document_path>]}
 
@@ -28,8 +29,8 @@ PREDEFINED DOCUMENT FORMATS
 Markdown
     inserted file contents prefix -- "'```<<root_directory_path>first_file_extension>'"
     inserted file contents suffix -- "'```'"
-    file path markers                  -- <!-- \"<local_file_path>\" -->, \
-<!-- '<local_file_path>' -->
+    file path markers                  -- <!-- <?class> \"<local_file_path>\" -->, \
+<!-- <?class> '<local_file_path>' -->
 
 --path-prefix (<\!--.*['\"])
     a search pattern before a <local_file_path> path inside a file path marker
@@ -48,6 +49,9 @@ Markdown
 
 -h, --help (0)
     whether to print the help message and then exit
+
+-o, --only ('')
+    a <class> only of which file path markers are to be expanded
 
 -i, --invert (0)
     whether to cancel a previous expanding
@@ -91,6 +95,7 @@ save=0
 savePath=/dev/stdout
 invert=0
 docPathArgPos=2
+only=''
 
 while (( $# > 0 ))
 do
@@ -130,6 +135,11 @@ do
             ;;
         -i | --invert)
             invert=1
+            shift
+            ;;
+        -o | --only)
+            only=$2
+            shift
             shift
             ;;
         -* | --*)
@@ -174,7 +184,7 @@ fi
 paths=($(find $rootPath -type f ! -path '*/.*'))
 case $documentFormat in
     markdown | md)
-        pathPfx="<\!-- *['\"]"
+        pathPfx="<\!-- *$only *['\"]"
         pathSfx="['\"] *-->"
         sfx='```'
         pfx () {

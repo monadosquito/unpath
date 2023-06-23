@@ -10,6 +10,7 @@ The `unpath` tool is to expand file paths into their contents.
     [--suffix <prefix>]
     [-d | --document-format <document_format>]
     [-h | --help]
+    [-o <class> | --only <class>]
     [-s | --save]
     {<root_directory_path> [<document_path>] | [<document_path>]}
 ```
@@ -66,10 +67,23 @@ whose contents are to be [expanded](#expand) with.
 
 - Paths inside file path markers must be quoted.
 
+## Hints
+
+- In order that only a particular \<class\>
+of path markers
+to expand can be chosen,
+a \<local\_file\_path\> can be prepended
+with its \<class\>.
+
 # Expand
 
 1. Enter the nix shell running the `nix-shell` command.
 2. Run the `unpath <root_directory_path> <document_path>` command.
+
+## Hints
+
+- In order to expand only a particular \<class\> of path markers, pass it
+as a value of the `--only` (`-o`) option.
 
 ## Notes
 
@@ -104,9 +118,9 @@ followed by the [`bem` library](https://github.com/monadosquito/bem).
 
 the predefined document formats
 
-|Document format|Inserted file contents prefix               |Inserted file contents suffix |Path markers                                                  |
-|---------------|--------------------------------------------|------------------------------|--------------------------------------------------------------|
-|Markdown       |` ```<<root_directory_path>file_extension> `|` ``` `                       |`<!-- "<local_file_path>" -->`, `<!-- '<local_file_path>' -->`|
+|Document format|Inserted file contents prefix               |Inserted file contents suffix |Path markers                                                                    |
+|---------------|--------------------------------------------|------------------------------|--------------------------------------------------------------------------------|
+|Markdown       |` ```<<root_directory_path>file_extension> `|` ``` `                       |`<!-- <?class> "<local_file_path>" -->`, `<!-- <?class> '<local_file_path>' -->`|
 
 ## Table 2
 
@@ -120,5 +134,6 @@ the flag and options descriptions
 |`--suffix`               |` ``` `                                     |text to append to inserted file contents                                      |
 |`-d`, `--document-format`|`Markdown`                                  |a predefined set of prefixes and suffixes to use                              |
 |`-h`, `--help`           |`0`                                         |whether to print the help message and then exit                               |
+|`-o`, `--only`           |`''`                                        |a \<class\> only of which file path markers are to be expanded                |
 |`-i`, `--invert`         |`0`                                         |whether to cancel a previous expanding                                        |
 |`-s`, `--save`           |`0`                                         |whether to save output into a \<document\_path\> file instead of printing it  |

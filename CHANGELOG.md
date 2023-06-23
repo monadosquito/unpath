@@ -1,7 +1,11 @@
 # [Unreleased]
 
+# [1.0.0] - 2023-06-30
+
 ## Added
 
+- A single \<class\> of path markers can be expanded
+by passsing it as a value of the `--only` (`-o`) option.
 - Hidden files under a \<root\_directory\_path\> directory are ignored.
 - Each \<local\_file\_path\> expansion \<prefix\> includes its \<local\_file\_path\> extension
 when the predefined set of Markdown prefixes and suffixes is used.
