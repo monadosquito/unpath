@@ -2,6 +2,9 @@
 
 ## Added
 
+- The path marker first directory names
+differring from each other
+are supported.
 - The idempotent property is maintained.
 - A previous [expanding](https://github.com/monadosquito/unpath#expand) can be cancelled
 by passing the `--invert` (`-i`) flag.

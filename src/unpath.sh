@@ -172,8 +172,6 @@ else
 fi
 
 paths=($(find $rootPath -type f))
-fstPath=${paths[0]}
-ext=${fstPath##*.}
 case $documentFormat in
     markdown | md)
         pathPfx="<\!-- *['\"]"
@@ -194,25 +192,46 @@ esac
 output=$(path "$pathPrefix" "$pathSuffix" "$suffix" "$doc")
 if (( $invert == 0 ))
 then
-    fstMrkPath=$(echo "$doc" \
-                | sed --quiet --regexp-extended \
-                      "s|$pathPrefix(.*)$pathSuffix|\1|p" \
-                | head -1
+    mrkLclRoots=($(echo "$doc" \
+                  | sed --quiet --regexp-extended \
+                       "s|$pathPrefix(.*)$pathSuffix|\1|p"
+                  )
                 )
-    fstLclRoot=${fstMrkPath%%/*}
-    for path in "${paths[@]}"
+    mrkLclRoots=($(for mrkLclRootIx in "${!mrkLclRoots[@]}"
+                   do
+                       mrkLclRoot=${mrkLclRoots[$mrkLclRootIx]%%/*}
+                       if [[ $mrkLclRoot == '*.*' ]]
+                       then
+                           echo noLclRoot
+                       else
+                           echo "$mrkLclRoot"
+                       fi
+                   done \
+                  | sort --unique
+                  )
+                )
+    for mrkLclRoot in "${mrkLclRoots[@]}"
     do
-        pathMrk=$pathPfx$path$pathSfx
-        pathExpanded=$(echo "$pathExpanded" \
-                      | sed "\|$pathMrk|a $prefix\n$suffix" \
-                      | sed "\|$pathMrk|N; \|\n|r $path"
-                      )
-        lclPath=$fstLclRoot${path##*/$fstLclRoot}
-        lclPathMrk=$pathPrefix$lclPath$pathSuffix
-        output=$(echo "$output" \
-                | sed "\|$lclPathMrk|a $prefix\n$suffix" \
-                | sed "\|$lclPathMrk|N; \|\n|r $path"
-                )
+        for path in "${paths[@]}"
+        do
+            pathMrk=$pathPfx$path$pathSfx
+            output=$(echo "$output" \
+                    | sed "\|$pathMrk|a $prefix\n$suffix" \
+                    | sed "\|$pathMrk|N; \|\n|r $path"
+                    )
+            if [[ $mrkLclRoot == noLclRoot ]]
+            then
+                lclPath=${path#*/}
+                lclPath=${lclPath#*/}
+            else
+                lclPath=$mrkLclRoot${path##*/$mrkLclRoot}
+            fi
+            lclPathMrk=$pathPrefix$lclPath$pathSuffix
+            output=$(echo "$output" \
+                    | sed "\|$lclPathMrk|a $prefix\n$suffix" \
+                    | sed "\|$lclPathMrk|N; \|\n|r $path"
+                    )
+        done
     done
 fi
 echo "$output" > "$savePath"
