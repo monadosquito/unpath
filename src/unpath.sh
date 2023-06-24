@@ -177,7 +177,11 @@ case $documentFormat in
         pathPfx="<\!-- *['\"]"
         pathSfx="['\"] *-->"
         sfx='```'
-        pfx="$sfx$ext"
+        pfx () {
+            ext=$1
+
+            echo "$sfx$ext"
+        }
         ;;
     *)
         echo "$(noFmtErr "$documentFormat")"
@@ -186,7 +190,18 @@ case $documentFormat in
 esac
 : ${pathPrefix:="$pathPfx"}
 : ${pathSuffix:="$pathSfx"}
-: ${prefix:="$pfx"}
+if [[ -n $prefix ]]
+then
+    prefix () {
+        echo "$prefix"
+    }
+else
+    prefix () {
+        ext=$1
+
+        echo "$(pfx "$ext")"
+    }
+fi
 : ${suffix:="$sfx"}
 
 output=$(path "$pathPrefix" "$pathSuffix" "$suffix" "$doc")
@@ -227,8 +242,9 @@ then
                 lclPath=$mrkLclRoot${path##*/$mrkLclRoot}
             fi
             lclPathMrk=$pathPrefix$lclPath$pathSuffix
+            pathExt=${path##*.}
             output=$(echo "$output" \
-                    | sed "\|$lclPathMrk|a $prefix\n$suffix" \
+                    | sed "\|$lclPathMrk|a $(prefix "$pathExt")\n$suffix" \
                     | sed "\|$lclPathMrk|N; \|\n|r $path"
                     )
         done

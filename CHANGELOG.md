@@ -2,6 +2,8 @@
 
 ## Added
 
+- Each \<local\_file\_path\> expansion \<prefix\> includes its \<local\_file\_path\> extension
+when the predefined set of Markdown prefixes and suffixes is used.
 - The path marker first directory names
 differring from each other
 are supported.

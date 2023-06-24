@@ -104,21 +104,21 @@ followed by the [`bem` library](https://github.com/monadosquito/bem).
 
 the predefined document formats
 
-|Document format|Inserted file contents prefix                    |Inserted file contents suffix |Path markers                                                  |
-|---------------|-------------------------------------------------|------------------------------|--------------------------------------------------------------|
-|Markdown       |` ```<<root_directoy_path>first_file_extension> `|` ``` `                       |`<!-- "<local_file_path>" -->`, `<!-- '<local_file_path>' -->`|
+|Document format|Inserted file contents prefix               |Inserted file contents suffix |Path markers                                                  |
+|---------------|--------------------------------------------|------------------------------|--------------------------------------------------------------|
+|Markdown       |` ```<<root_directory_path>file_extension> `|` ``` `                       |`<!-- "<local_file_path>" -->`, `<!-- '<local_file_path>' -->`|
 
 ## Table 2
 
 the flag and options descriptions
 
-|Flag or option           |Default value                                      |Description                                                                   |
-|-------------------------|---------------------------------------------------|------------------------------------------------------------------------------|
-|`--path-prefix`          |`<\!--.*['\"]`                                     |a search pattern before a \<local\_file\_path\> path inside a file path marker|
-|`--path-suffix`          |`['\"].*-->`                                       |a search pattern after a \<local\_file\_path\> path inside a file path marker |
-|`--prefix`               |` ```<<root_directory_path>_first_file_extension> `|text to prepend to inserted file contents                                     |
-|`--suffix`               |` ``` `                                            |text to append to inserted file contents                                      |
-|`-d`, `--document-format`|`Markdown`                                         |a predefined set of prefixes and suffixes to use                              |
-|`-h`, `--help`           |`0`                                                |whether to print the help message and then exit                               |
-|`-i`, `--invert`         |`0`                                                |whether to cancel a previous expanding                                        |
-|`-s`, `--save`           |`0`                                                |whether to save output into a \<document\_path\> file instead of printing it  |
+|Flag or option           |Default value                               |Description                                                                   |
+|-------------------------|--------------------------------------------|------------------------------------------------------------------------------|
+|`--path-prefix`          |`<\!--.*['\"]`                              |a search pattern before a \<local\_file\_path\> path inside a file path marker|
+|`--path-suffix`          |`['\"].*-->`                                |a search pattern after a \<local\_file\_path\> path inside a file path marker |
+|`--prefix`               |` ```<<root_directory_path>file_extension> `|text to prepend to inserted file contents                                     |
+|`--suffix`               |` ``` `                                     |text to append to inserted file contents                                      |
+|`-d`, `--document-format`|`Markdown`                                  |a predefined set of prefixes and suffixes to use                              |
+|`-h`, `--help`           |`0`                                         |whether to print the help message and then exit                               |
+|`-i`, `--invert`         |`0`                                         |whether to cancel a previous expanding                                        |
+|`-s`, `--save`           |`0`                                         |whether to save output into a \<document\_path\> file instead of printing it  |
