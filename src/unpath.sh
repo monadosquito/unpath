@@ -171,7 +171,7 @@ else
     fi
 fi
 
-paths=($(find $rootPath -type f))
+paths=($(find $rootPath -type f ! -path '*/.*'))
 case $documentFormat in
     markdown | md)
         pathPfx="<\!-- *['\"]"
